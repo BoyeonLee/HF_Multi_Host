@@ -1,0 +1,64 @@
+# Copyright IBM Corp. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+version: '2'
+
+volumes:
+  org2_peer2:
+  org2_peer3:
+
+networks:
+  test:
+
+services:
+  org2_peer2:
+    container_name: org2_peer2
+    extends:
+      file: base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer2.org2.com
+      - CORE_PEER_ADDRESS=peer2.org2.com:4051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:4051
+      - CORE_PEER_CHAINCODEADDRESS=peer2.org2.com:4052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:4052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer2.org2.com:4051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer2.org2.com:4051
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb2:5984
+    volumes:
+        - /var/run/docker.sock:/host/var/run/docker.sock
+        - ../organizations/peerOrgs/org2/peers/peer2/msp:/etc/hyperledger/fabric/msp
+        - ../organizations/peerOrgs/org2/peers/peer2/tls:/etc/hyperledger/fabric/tls
+        - ../organizations/peerOrgs/org2/peers/peer2:/var/hyperledger/production
+    ports:
+      - 4051:4051
+    depends_on:
+      - couchdb2
+    networks:
+      - test
+
+  org2_peer3:
+    container_name: org2_peer3
+    extends:
+      file: base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer3.org2.com
+      - CORE_PEER_ADDRESS=peer3.org2.com:5051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:5051
+      - CORE_PEER_CHAINCODEADDRESS=peer3.org2.com:5052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:5052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer3.org2.com:5051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer3.org2.com:5051
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb3:5984
+    volumes:
+        - /var/run/docker.sock:/host/var/run/docker.sock
+        - ../organizations/peerOrgs/org2/peers/peer3/msp:/etc/hyperledger/fabric/msp
+        - ../organizations/peerOrgs/org2/peers/peer3/tls:/etc/hyperledger/fabric/tls
+        - ../organizations/peerOrgs/org2/peers/peer3:/var/hyperledger/production
+    ports:
+      - 5051:5051
+    depends_on:
+      - couchdb3
+    networks:
+      - test

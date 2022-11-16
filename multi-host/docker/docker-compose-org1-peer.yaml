@@ -1,0 +1,85 @@
+# Copyright IBM Corp. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+version: '2'
+
+volumes:
+  org1_peer0:
+  org1_peer1:
+
+networks:
+  test:
+
+services:
+  org1_peer0:
+    container_name: org1_peer0
+    extends:
+      file: base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.org1.com
+      - CORE_PEER_ADDRESS=peer0.org1.com:2051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:2051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.org1.com:2052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:2052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org1.com:2051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org1.com:2051
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
+    volumes:
+        - /var/run/docker.sock:/host/var/run/docker.sock
+        - ../organizations/peerOrgs/org1/peers/peer0/msp:/etc/hyperledger/fabric/msp
+        - ../organizations/peerOrgs/org1/peers/peer0/tls:/etc/hyperledger/fabric/tls
+        - ../organizations/peerOrgs/org1/peers/peer0:/var/hyperledger/production
+    ports:
+      - 2051:2051
+    depends_on:
+      - couchdb0
+    networks:
+      - test
+
+  org1_peer1:
+    container_name: org1_peer1
+    extends:
+      file: base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.org1.com
+      - CORE_PEER_ADDRESS=peer1.org1.com:3051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:3051
+      - CORE_PEER_CHAINCODEADDRESS=peer1.org1.com:3052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:3052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.org1.com:3051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org1.com:3051
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb1:5984
+    volumes:
+        - /var/run/docker.sock:/host/var/run/docker.sock
+        - ../organizations/peerOrgs/org1/peers/peer1/msp:/etc/hyperledger/fabric/msp
+        - ../organizations/peerOrgs/org1/peers/peer1/tls:/etc/hyperledger/fabric/tls
+        - ../organizations/peerOrgs/org1/peers/peer1:/var/hyperledger/production
+    ports:
+      - 3051:3051
+    depends_on:
+      - couchdb1
+    networks:
+      - test
+
+  cli:
+    container_name: cli
+    image: hyperledger/fabric-tools:$IMAGE_TAG
+    tty: true
+    stdin_open: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - FABRIC_LOGGING_SPEC=INFO
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../organizations:/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations
+        # - ../scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+    depends_on:
+      - org1_peer0
+      - org1_peer1
+    networks:
+      - test

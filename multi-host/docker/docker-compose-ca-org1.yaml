@@ -1,0 +1,21 @@
+version: '2'
+
+networks:
+  test:
+
+services: 
+  ca_org1_peer:
+    image: hyperledger/fabric-ca:latest
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca 
+      - FABRIC_CA_SERVER_CA_NAME=ca_org1_peer
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_PORT=2054
+    ports:
+      - "2054:2054"
+    command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
+    volumes:
+      - ../organizations/CAs/peers/org1:/etc/hyperledger/fabric-ca
+    container_name: ca_org1_peer
+    networks:
+      - test

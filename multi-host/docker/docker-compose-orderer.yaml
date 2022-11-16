@@ -1,0 +1,100 @@
+# Copyright IBM Corp. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+version: '2'
+
+volumes:
+  orderer0:
+  orderer1:
+  orderer2:
+  orderer3:
+  orderer4:
+
+networks:
+  test:
+
+services:
+  orderer0:
+    container_name: orderer0
+    extends:
+      file: base.yaml
+      service: orderer-base
+    environment:
+      - ORDERER_GENERAL_LISTENPORT=2050
+    volumes:
+        - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+        - ../organizations/ordererOrg/orderers/orderer0/msp:/var/hyperledger/orderer/msp
+        - ../organizations/ordererOrg/orderers/orderer0/tls/:/var/hyperledger/orderer/tls
+        - ../organizations/ordererOrg/orderers/orderer0:/var/hyperledger/production/orderer
+    ports:
+      - 2050:2050
+    networks:
+      - test
+  
+  orderer1:
+    container_name: orderer1
+    extends:
+      file: base.yaml
+      service: orderer-base
+    environment:
+      - ORDERER_GENERAL_LISTENPORT=3050
+    volumes:
+        - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+        - ../organizations/ordererOrg/orderers/orderer1/msp:/var/hyperledger/orderer/msp
+        - ../organizations/ordererOrg/orderers/orderer1/tls/:/var/hyperledger/orderer/tls
+        - ../organizations/ordererOrg/orderers/orderer1:/var/hyperledger/production/orderer
+    ports:
+      - 3050:3050
+    networks:
+      - test
+  
+  orderer2:
+    container_name: orderer2
+    extends:
+      file: base.yaml
+      service: orderer-base
+    environment:
+      - ORDERER_GENERAL_LISTENPORT=4050
+    volumes:
+        - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+        - ../organizations/ordererOrg/orderers/orderer2/msp:/var/hyperledger/orderer/msp
+        - ../organizations/ordererOrg/orderers/orderer2/tls/:/var/hyperledger/orderer/tls
+        - ../organizations/ordererOrg/orderers/orderer2:/var/hyperledger/production/orderer
+    ports:
+      - 4050:4050
+    networks:
+      - test
+
+  orderer3:
+    container_name: orderer3
+    extends:
+      file: base.yaml
+      service: orderer-base
+    environment:
+      - ORDERER_GENERAL_LISTENPORT=5050
+    volumes:
+        - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+        - ../organizations/ordererOrg/orderers/orderer3/msp:/var/hyperledger/orderer/msp
+        - ../organizations/ordererOrg/orderers/orderer3/tls/:/var/hyperledger/orderer/tls
+        - ../organizations/ordererOrg/orderers/orderer3:/var/hyperledger/production/orderer
+    ports:
+      - 5050:5050
+    networks:
+      - test
+
+  orderer4:
+    container_name: orderer4
+    extends:
+      file: base.yaml
+      service: orderer-base
+    environment:
+      - ORDERER_GENERAL_LISTENPORT=6050
+    volumes:
+        - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+        - ../organizations/ordererOrg/orderers/orderer4/msp:/var/hyperledger/orderer/msp
+        - ../organizations/ordererOrg/orderers/orderer4/tls/:/var/hyperledger/orderer/tls
+        - ../organizations/ordererOrg/orderers/orderer4:/var/hyperledger/production/orderer
+    ports:
+      - 6050:6050
+    networks:
+      - test
